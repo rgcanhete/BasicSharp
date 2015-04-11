@@ -22,6 +22,23 @@ namespace BasicSharp.IDE.ViewModel
     {
         public string FileAddress { get; set; }
 
+        ReadOnlyCollection<SyntacticException> syntacticErros;
+        public ReadOnlyCollection<SyntacticException> SyntacticErrors
+        {
+            get
+            {
+                return syntacticErros;
+            }
+            set
+            {
+                syntacticErros = value;
+                OnPropertyChanged();
+                this.Status = value == null ? Status.CompilationSuccess : (value.Any() ? Status.CompilationException : Status.CompilationSuccess);
+            }
+
+        }
+
+
         private string fileName;
         public string FileName
         {
@@ -67,9 +84,9 @@ namespace BasicSharp.IDE.ViewModel
             get { return syntax; }
             set
             {
-                if (syntax == value) 
+                if (syntax == value)
                     return;
-                
+
                 syntax = value;
                 OnPropertyChanged();
             }
@@ -100,15 +117,9 @@ namespace BasicSharp.IDE.ViewModel
 
             Tokens = new ObservableCollection<TokenInfo>(tokens);
 
-            //try
-            {
-                Syntax = new List<SyntaxNode> { parser.GetSyntax() };
-                this.Status = Status.CompilationSuccess;
-            }
-            //catch 
-            {
-                this.Status = Status.CompilationException;
-            }
+            Syntax = new List<SyntaxNode> { parser.GetSyntax() };
+
+            this.SyntacticErrors = parser.SyntacticErrors;
         }
     }
 }

@@ -1033,6 +1033,9 @@ namespace BasicSharp.Compiler.Parser
         void handleError(SyntacticException error = null)
         {
             _syntacticErrors.Add(error);
+
+            if (error != null)
+                Console.WriteLine(error.Message);
         }
     }
 }
